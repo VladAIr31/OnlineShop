@@ -15,10 +15,10 @@ namespace OnlineShop.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Titlul este obligatoriu")]
-        public string Title { get; set; }=  string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Descrierea este obligatorie")]
-        public string Description { get; set; }= string.Empty;  
+        public string Description { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Imaginea este obligatorie")]
         public string ImagePath { get; set; } = string.Empty; // Se salvează calea către fișier
@@ -50,9 +50,9 @@ namespace OnlineShop.Models
             }
         }
 
-     // Starea produsului pentru fluxul de aprobare 
+        // Starea produsului pentru fluxul de aprobare 
         public ProductStatus Status { get; set; } = ProductStatus.Pending;
-// ID-ul utilizatorului (Colaborator) care a propus produsul [cite: 36]
+        // ID-ul utilizatorului (Colaborator) care a propus produsul [cite: 36]
         public string? UserId { get; set; }
 
         // Relație cu Categoria (FK) [cite: 15]

@@ -19,6 +19,6 @@ namespace OnlineShop.Models
         public int ProductId { get; set; }
         public virtual Product? Product { get; set; }
 
-        //public string? UserId { get; set; } // Cine a lăsat review-ul
+        public string? UserId { get; set; } // Cine a lăsat review-ul
     }
 }
