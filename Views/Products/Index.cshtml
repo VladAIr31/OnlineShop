@@ -1,0 +1,74 @@
+﻿@model IEnumerable<OnlineShop.Models.Product>
+
+@{
+    ViewData["Title"] = "Toate Produsele";
+}
+
+<style>
+
+    .card-img-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+    }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.3s ease;
+        }
+
+    .card:hover .card-img-wrapper img {
+        transform: scale(1.05);
+    }
+
+    .card-body-transparent {
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(5px);
+        position: relative;
+        z-index: 2;
+    }
+
+    .card {
+        background-color: transparent;
+        border: none;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Lista Produse</h2>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-img-wrapper">
+                        <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "https://via.placeholder.com/300" : item.ImagePath)"
+                             alt="@item.Title">
+                    </div>
+
+                    <div class="card-body card-body-transparent d-flex flex-column">
+                        <h5 class="card-title text-dark fw-bold">@item.Title</h5>
+
+                        <p class="card-text text-muted" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                            @item.Description
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <span class="h4 mb-0 text-primary fw-bold">@item.Price RON</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer card-body-transparent border-top-0 pt-0">
+                        <small class="text-muted">Categorie: @(item.Category?.Name ?? "General")</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

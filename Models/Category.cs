@@ -8,9 +8,9 @@ namespace OnlineShop.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Numele categoriei este obligatoriu")]
-        public string Name { get; set; } = string.Empty; // Initializare pentru fix CS8618
+        public string Name { get; set; } = string.Empty;
 
-        // Relatie: O categorie are mai multe produse [cite: 15]
+        // Relatie: O categorie are mai multe produse
         public virtual ICollection<Product>? Products { get; set; }
     }
 }
