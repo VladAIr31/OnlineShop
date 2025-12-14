@@ -1,0 +1,31 @@
+﻿@model OnlineShop.Models.Category
+
+@{
+    ViewData["Title"] = "Șterge Categorie";
+}
+
+<h1>Șterge Categorie</h1>
+
+<h3>Ești sigur că vrei să ștergi această categorie?</h3>
+<div class="alert alert-warning">
+    <strong>Atenție!</strong> Ștergerea acestei categorii va șterge automat toate produsele asociate acesteia!
+</div>
+
+<div>
+    <h4>Detalii Categorie</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Șterge" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Înapoi la listă</a>
+    </form>
+</div>
