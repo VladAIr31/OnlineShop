@@ -52,10 +52,10 @@ namespace OnlineShop.Models
 
         // Starea produsului pentru fluxul de aprobare 
         public ProductStatus Status { get; set; } = ProductStatus.Pending;
-        // ID-ul utilizatorului (Colaborator) care a propus produsul [cite: 36]
+        // ID-ul utilizatorului (Colaborator) care a propus produsul 
         public string? UserId { get; set; }
 
-        // Relație cu Categoria (FK) [cite: 15]
+        // Relație cu Categoria (FK) 
         [Required(ErrorMessage = "Selectarea categoriei este obligatorie")]
         public int CategoryId { get; set; }
         public virtual Category? Category { get; set; }
