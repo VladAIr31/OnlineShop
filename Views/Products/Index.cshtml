@@ -39,7 +39,26 @@
 </style>
 
 <div class="container mt-5">
-    <h2 class="mb-4">Lista Produse</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Lista Produse</h2>
+        <div>
+            @if (User.IsInRole("Colaborator") || User.IsInRole("Administrator"))
+            {
+                <a asp-action="Create" class="btn btn-primary">Adauga Produs</a>
+            }
+            @if (User.IsInRole("Administrator"))
+            {
+                <a asp-action="PendingIndex" class="btn btn-warning ms-2">Produse in Asteptare</a>
+            }
+        </div>
+    </div>
+
+    @if (TempData["message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["message"]
+        </div>
+    }
 
     <div class="row">
         @foreach (var item in Model)
@@ -65,7 +84,16 @@
                     </div>
 
                     <div class="card-footer card-body-transparent border-top-0 pt-0">
-                        <small class="text-muted">Categorie: @(item.Category?.Name ?? "General")</small>
+                        <small class="text-muted d-block mb-2">Categorie: @(item.Category?.Name ?? "General")</small>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <div class="d-flex gap-2">
+                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning w-100">Editeaza</a>
+                                 <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="w-100" onsubmit="return confirm('Esti sigur ca vrei sa stergi acest produs?');">
+                                     <button type="submit" class="btn btn-sm btn-outline-danger w-100">Sterge</button>
+                                 </form>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

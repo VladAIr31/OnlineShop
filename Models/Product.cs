@@ -20,8 +20,7 @@ namespace OnlineShop.Models
         [Required(ErrorMessage = "Descrierea este obligatorie")]
         public string Description { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Imaginea este obligatorie")]
-        public string ImagePath { get; set; } = string.Empty; // Se salvează calea către fișier
+        public string? ImagePath { get; set; } // Se salvează calea către fișier
 
         [Required(ErrorMessage = "Prețul este obligatoriu")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Prețul trebuie să fie mai mare ca 0")]
