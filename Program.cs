@@ -18,6 +18,9 @@ options.SignIn.RequireConfirmedAccount = true)
 .AddEntityFrameworkStores<ApplicationDbContext>(
 );
 
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<OnlineShop.Services.IAiAssistantService, OnlineShop.Services.GeminiAiService>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

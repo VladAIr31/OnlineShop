@@ -12,7 +12,7 @@ namespace OnlineShop.Models
         [Range(1, 5, ErrorMessage = "Nota trebuie să fie între 1 și 5")]
         public int? Rating { get; set; } // Rating opțional (nullable)
 
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; } = DateTime.UtcNow;
 
         // --- Relații ---
 
@@ -20,5 +20,6 @@ namespace OnlineShop.Models
         public virtual Product? Product { get; set; }
 
         public string? UserId { get; set; } // Cine a lăsat review-ul
+        public virtual ApplicationUser? User { get; set; }
     }
 }

@@ -1,0 +1,33 @@
+@model OnlineShop.Models.CollaboratorRequest
+
+@{
+    ViewData["Title"] = "Devino Colaborator";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card bg-dark text-white border-secondary shadow-lg p-4" style="max-width: 500px; width: 100%;">
+        <div class="card-body">
+            <h2 class="card-title text-center text-gold mb-4" style="font-family: 'Playfair Display', serif;">Devino Partener</h2>
+            <p class="text-muted text-center mb-4">Doresti sa iti vinzi produsele pe platforma noastra? Trimite o cerere si spune-ne de ce vrei sa ni te alaturi.</p>
+
+            <form asp-action="Apply">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="mb-3">
+                    <label asp-for="Reason" class="form-label">De ce vrei sa devii colaborator?</label>
+                    <textarea asp-for="Reason" class="form-control bg-secondary text-white border-0" rows="5" placeholder="Scrie aici..."></textarea>
+                    <span asp-validation-for="Reason" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-warning btn-lg">Trimite Cererea</button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-decoration-none text-muted mt-2">Renunta</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,284 @@
+@model OnlineShop.Models.Product
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent p-0 mb-4">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted">Catalog</a></li>
+            <li class="breadcrumb-item active text-warning" aria-current="page">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row align-items-start">
+        <!-- Imagine Produs -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 bg-transparent">
+                <img src="@(string.IsNullOrEmpty(Model.ImagePath) ? "https://via.placeholder.com/600" : Model.ImagePath)"
+                     class="img-fluid w-100 rounded shadow-lg" alt="@Model.Title" style="object-fit: cover; border: 1px solid #333;">
+            </div>
+        </div>
+
+        <!-- Detalii Produs -->
+        <div class="col-md-6 ps-md-5">
+            <h1 class="display-4 fw-bold mb-3 text-light" style="font-family: 'Playfair Display', serif;">@Model.Title</h1>
+            
+            <div class="d-flex align-items-center mb-4">
+                 @if(Model.Rating > 0)
+                 {
+                    <span class="badge bg-warning text-dark me-3 rounded-pill px-3 py-2">
+                        <i class="bi bi-star-fill"></i> @Model.Rating
+                    </span>
+                 }
+                 <span class="text-uppercase text-muted small tracking-wider">@(Model.Category?.Name ?? "General")</span>
+            </div>
+
+            <h2 class="text-warning fw-bold mb-4 display-6">@Model.Price <span class="fs-4 text-muted">RON</span></h2>
+
+            <p class="lead text-light mb-5 opacity-75" style="line-height: 1.8;">
+                @Model.Description
+            </p>
+
+            <div class="d-flex gap-3 mb-5">
+                <form asp-controller="Cart" asp-action="AddToCart" method="get" class="d-inline">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-warning btn-lg px-5 rounded-0 fw-bold shadow-gold">ADAUGA IN COS</button>
+                </form>
+                
+                <form asp-controller="Wishlist" asp-action="AddToWishlist" method="get" class="d-inline">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-outline-light btn-lg rounded-0 px-4" title="Adauga la Favorite"><i class="bi bi-heart"></i></button>
+                </form>
+
+                <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-0 px-4">INAPOI</a>
+            </div>
+
+            @if (User.IsInRole("Administrator"))
+            {
+                <div class="card bg-dark border border-secondary p-4 mt-4">
+                    <h5 class="card-title text-muted mb-3">Panou Administrare</h5>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning w-100">Editeaza</a>
+                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="w-100" onsubmit="return confirm('Esti sigur ca vrei sa stergi acest produs?');">
+                            <button type="submit" class="btn btn-outline-danger w-100">Sterge</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Sectiune Review-uri -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-gold border-bottom border-secondary pb-2 mb-4" style="font-family: 'Playfair Display', serif;">
+                Recenzii Clienti (@(Model.Reviews?.Count ?? 0))
+            </h3>
+        </div>
+
+        <!-- Lista Review-uri -->
+        <div class="col-md-7">
+            @if (Model.Reviews != null && Model.Reviews.Any())
+            {
+                @foreach (var review in Model.Reviews.OrderByDescending(r => r.Date))
+                {
+                    <div class="card bg-transparent border-bottom border-secondary mb-3 pb-3">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong class="text-light">@(review.User?.UserName ?? "Utilizator Anonim")</strong>
+                                <span class="text-muted small ms-2">@review.Date.ToShortDateString()</span>
+                            </div>
+                            @if (review.Rating.HasValue)
+                            {
+                                <div class="text-warning">
+                                    @for (int i = 0; i < review.Rating; i++) { <i class="bi bi-star-fill"></i> }
+                                    @for (int i = 0; i < (5 - review.Rating); i++) { <i class="bi bi-star"></i> }
+                                </div>
+                            }
+                        </div>
+                        <p class="text-light mt-2 mb-1">@review.Content</p>
+                        
+                        @if (User.IsInRole("Administrator") || (User.Identity.IsAuthenticated && review.User != null && review.User.UserName == User.Identity.Name))
+                        {
+                            <form asp-action="DeleteReview" asp-route-id="@review.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-link text-danger p-0 small text-decoration-none" style="font-size: 0.8rem;">Sterge recenzia</button>
+                            </form>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted fst-italic">Nu exista recenzii pentru acest produs inca. Fii primul care scrie una!</p>
+            }
+        </div>
+
+        <!-- Formular Adaugare Review -->
+        <div class="col-md-5 ps-md-5">
+            <div class="card bg-dark border border-secondary p-4 shadow-lg sticky-top" style="top: 20px;">
+                <h4 class="text-light mb-3">Lasa o recenzie</h4>
+                
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form method="post" action="/Products/AddReview">
+                        <input type="hidden" name="ProductId" value="@Model.Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Rating</label>
+                            <div class="rating-css">
+                                <div class="star-icon">
+                                    <input type="radio" value="5" name="Rating" id="rating5">
+                                    <label for="rating5" class="bi bi-star-fill"></label>
+                                    <input type="radio" value="4" name="Rating" id="rating4">
+                                    <label for="rating4" class="bi bi-star-fill"></label>
+                                    <input type="radio" value="3" name="Rating" id="rating3">
+                                    <label for="rating3" class="bi bi-star-fill"></label>
+                                    <input type="radio" value="2" name="Rating" id="rating2">
+                                    <label for="rating2" class="bi bi-star-fill"></label>
+                                    <input type="radio" value="1" name="Rating" checked id="rating1">
+                                    <label for="rating1" class="bi bi-star-fill"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Comentariul tau</label>
+                            <textarea class="form-control bg-dark text-light border-secondary" name="Content" rows="4" placeholder="Spune-ne ce crezi despre acest produs..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Posteaza Recenzia</button>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-3">Trebuie sa fii autentificat pentru a lasa o recenzie.</p>
+                        <a href="/Identity/Account/Login" class="btn btn-outline-warning">Autentificare</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Widget -->
+<div id="aiChatWidget" class="position-fixed bottom-0 end-0 m-4" style="z-index: 1000;">
+    <!-- Chat Button -->
+    <button id="chatToggleBtn" class="btn btn-warning rounded-circle shadow-lg p-3" style="width: 60px; height: 60px;">
+        <i class="bi bi-robot fs-3 text-dark"></i>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chatWindow" class="card shadow-lg d-none mt-2" style="width: 350px; height: 500px; border-radius: 15px;">
+        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+            <h5 class="mb-0 small fw-bold"><i class="bi bi-stars me-1"></i> Asistent Produse</h5>
+            <button id="closeChatBtn" type="button" class="btn-close btn-close-white small"></button>
+        </div>
+        <div class="card-body bg-dark d-flex flex-column h-100 p-0">
+            <div id="chatMessages" class="flex-grow-1 p-3 overflow-auto" style="scrollbar-width: thin;">
+                <!-- Initial Message -->
+                <div class="d-flex mb-3">
+                    <div class="bg-secondary text-light p-2 rounded-3 small shadow" style="max-width: 80%;">
+                        Salut! Sunt asistentul tau virtual. Intreaba-ma orice despre <strong>@Model.Title</strong>!
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-3 bg-secondary border-top border-dark">
+                <div class="input-group">
+                    <input type="text" id="chatInput" class="form-control bg-dark text-light border-0" placeholder="Scrie o intrebare..." style="font-size: 0.9rem;">
+                    <button id="sendChatBtn" class="btn btn-warning"><i class="bi bi-send-fill"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const widget = document.getElementById('aiChatWidget');
+        const toggleBtn = document.getElementById('chatToggleBtn');
+        const chatWindow = document.getElementById('chatWindow');
+        const closeBtn = document.getElementById('closeChatBtn');
+        const sendBtn = document.getElementById('sendChatBtn');
+        const input = document.getElementById('chatInput');
+        const messages = document.getElementById('chatMessages');
+
+        // Toggle Chat
+        toggleBtn.addEventListener('click', () => {
+             toggleBtn.classList.add('d-none');
+             chatWindow.classList.remove('d-none');
+        });
+
+        closeBtn.addEventListener('click', () => {
+             chatWindow.classList.add('d-none');
+             toggleBtn.classList.remove('d-none');
+        });
+
+        // Send Message
+        async function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Add User Message
+            appendMessage(text, 'user');
+            input.value = '';
+            input.disabled = true;
+
+            // Add Loading Indicator
+            const loadingId = appendMessage('<div class="spinner-border spinner-border-sm text-warning" role="status"></div> Ma gandesc...', 'ai', true);
+
+            try {
+                const response = await fetch('/api/ProductChat/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: @Model.Id, question: text })
+                });
+
+                const data = await response.json();
+                
+                // Remove Loading
+                document.getElementById(loadingId).remove();
+
+                if (response.ok) {
+                    appendMessage(data.answer, 'ai');
+                } else {
+                    appendMessage('Scuze, am intampinat o eroare.', 'ai');
+                }
+            } catch (error) {
+                 document.getElementById(loadingId).remove();
+                 appendMessage('Eroare retea. Incearca din nou.', 'ai');
+            } finally {
+                input.disabled = false;
+                input.focus();
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function appendMessage(text, sender, isHtml = false) {
+            const div = document.createElement('div');
+            // Fix: Add random number to avoid ID collision if called too fast
+            const id = 'msg-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            div.id = id;
+            div.className = `d-flex mb-3 ${sender === 'user' ? 'justify-content-end' : ''}`;
+            
+            const content = isHtml ? text : text.replace(/\n/g, '<br>');
+            const bgClass = sender === 'user' ? 'bg-warning text-dark' : 'bg-secondary text-light';
+
+            div.innerHTML = `
+                <div class="${bgClass} p-2 rounded-3 small shadow" style="max-width: 80%;">
+                    ${content}
+                </div>
+            `;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+            return id;
+        }
+    });
+</script>

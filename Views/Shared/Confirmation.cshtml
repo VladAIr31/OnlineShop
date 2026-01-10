@@ -1,0 +1,42 @@
+@model dynamic
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="text-center p-5 rounded shadow-lg" style="background-color: #1a1a1a; border: 1px solid #333; max-width: 600px;">
+        <div class="mb-4">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+        </div>
+        
+        <h1 class="display-5 text-gold mb-3" style="font-family: 'Playfair Display', serif;">
+            @Model.Title
+        </h1>
+        
+        <p class="lead text-light mb-5">
+            @Model.Message
+        </p>
+
+        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+            @if(!string.IsNullOrEmpty(Model.PrimaryAction))
+            {
+                <a asp-controller="@Model.PrimaryController" asp-action="@Model.PrimaryAction" class="btn btn-warning btn-lg px-4 gap-3">
+                    @Model.PrimaryText
+                </a>
+            }
+            
+            @if(!string.IsNullOrEmpty(Model.SecondaryAction))
+            {
+                <a asp-controller="@Model.SecondaryController" asp-action="@Model.SecondaryAction" class="btn btn-outline-light btn-lg px-4">
+                    @Model.SecondaryText
+                </a>
+            }
+            else
+            {
+                 <a asp-controller="Products" asp-action="Index" class="btn btn-outline-light btn-lg px-4">
+                    Continua Cumparaturile
+                </a>
+            }
+        </div>
+    </div>
+</div>

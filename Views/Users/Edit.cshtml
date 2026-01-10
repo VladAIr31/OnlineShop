@@ -1,0 +1,42 @@
+@model OnlineShop.Controllers.ManageUserRolesViewModel
+
+@{
+    ViewData["Title"] = "Editare Roluri Utilizator";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Editare Roluri: @Model.Email</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="Email" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Selecteaza Roluri:</label>
+                            @for (int i = 0; i < Model.Roles.Count; i++)
+                            {
+                                <div class="form-check">
+                                    <input type="hidden" asp-for="@Model.Roles[i].RoleName" />
+                                    <input asp-for="@Model.Roles[i].IsSelected" class="form-check-input" />
+                                    <label class="form-check-label" asp-for="@Model.Roles[i].IsSelected">
+                                        @Model.Roles[i].RoleName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">Inapoi</a>
+                            <button type="submit" class="btn btn-success">Salveaza Modificarile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

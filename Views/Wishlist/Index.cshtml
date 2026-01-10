@@ -1,0 +1,45 @@
+@model OnlineShop.Models.Wishlist
+
+@{
+    ViewData["Title"] = "Wishlist";
+}
+
+<div class="container mt-5">
+    <h2 class="text-gold mb-4" style="font-family: 'Playfair Display', serif;">Lista de Dorinte</h2>
+
+    @if (Model.WishlistItems.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            @foreach (var item in Model.WishlistItems)
+            {
+                <div class="col">
+                    <div class="card h-100 bg-dark border-secondary shadow-sm">
+                        <img src="@(string.IsNullOrEmpty(item.Product.ImagePath) ? "https://via.placeholder.com/300" : item.Product.ImagePath)" class="card-img-top" alt="@item.Product.Title" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title text-light">@item.Product.Title</h5>
+                            <p class="card-text text-warning fw-bold">@item.Product.Price RON</p>
+                            <div class="d-grid gap-2">
+                                <form asp-action="MoveToCart" method="post">
+                                    <input type="hidden" name="itemId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-primary w-100 btn-sm">Muta in Cos</button>
+                                </form>
+                                <form asp-action="Remove" method="post">
+                                    <input type="hidden" name="itemId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-outline-danger w-100 btn-sm">Sterge</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-heart display-1 text-muted mb-3"></i>
+            <h3 class="text-light">Lista ta de dorinte este goala</h3>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-warning mt-3">Vezi Produse</a>
+        </div>
+    }
+</div>

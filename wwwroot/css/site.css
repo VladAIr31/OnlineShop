@@ -1,44 +1,437 @@
-html {
-  font-size: 14px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap');
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+:root {
+  --gold-primary: #d4af37;
+  --gold-light: #f3e5ab;
+  --gold-dark: #aa8c2c;
+  --dark-bg: #0f0f0f;
+  --dark-surface: #1a1a1a;
+  --dark-card: #222222;
+  --text-light: #f5f5f5;
+  --text-muted: #a0a0a0;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Montserrat', sans-serif;
 }
 
 body {
-  margin-bottom: 60px;
+  font-family: var(--font-body);
+  background-color: var(--dark-bg);
+  color: var(--text-light);
+  min-height: 100vh;
+  padding-bottom: 0;
+  overflow-x: hidden;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--gold-primary);
+  letter-spacing: 0.05em;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.text-gold {
+  color: var(--gold-primary) !important;
 }
 
-/* Hide spin buttons for input type number */
-/* Chrome, Safari, Edge, Opera */
+.tracking-wide {
+  letter-spacing: 0.15em;
+}
+
+/* Premium Buttons */
+.btn-primary,
+.btn-warning {
+  background: linear-gradient(45deg, var(--gold-dark), var(--gold-primary));
+  border: none;
+  color: #000;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 12px 30px;
+  border-radius: 0;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover,
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+  background: linear-gradient(45deg, var(--gold-primary), var(--gold-light));
+  color: #000;
+}
+
+.btn-outline-light {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+.btn-outline-light:hover {
+  background: var(--gold-primary);
+  border-color: var(--gold-primary);
+  color: #000;
+}
+
+/* Navbar Redesign */
+.navbar-custom {
+  background-color: transparent;
+  padding: 20px 0;
+  transition: background-color 0.3s;
+}
+
+.brand-centered {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: var(--gold-primary);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  display: block;
+  text-align: center;
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.brand-centered:hover {
+  color: var(--gold-light);
+}
+
+.nav-links-custom {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.nav-link-custom {
+  color: var(--text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.nav-link-custom:hover,
+.nav-link-custom.active {
+  color: var(--gold-primary);
+}
+
+.nav-link-custom::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -5px;
+  left: 50%;
+  background-color: var(--gold-primary);
+  transition: all 0.3s;
+}
+
+.nav-link-custom:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Cards */
+.card {
+  background-color: var(--dark-card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0;
+}
+
+.card:hover {
+  border-color: var(--gold-dark);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Form Elements */
+.form-control {
+  background-color: var(--dark-surface);
+  border: 1px solid #333;
+  color: var(--text-light);
+  border-radius: 0;
+  padding: 12px;
+}
+
+.form-control:focus {
+  background-color: var(--dark-surface);
+  border-color: var(--gold-primary);
+  box-shadow: none;
+  color: var(--text-light);
+}
+
+/* Utilities */
+.bg-dark-surface {
+  background-color: var(--dark-surface) !important;
+}
+
+.border-gold {
+  border-color: var(--gold-primary) !important;
+}
+
+/* Breadcrumb */
+.breadcrumb-item a {
+  color: var(--gold-primary);
+  text-decoration: none;
+}
+
+.breadcrumb-item.active {
+  color: var(--text-muted);
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+  color: #555;
+}
+
+/* Star Rating */
+.rating-css input {
+  display: none;
+}
+
+.star-icon {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.star-icon label {
+  font-size: 1.5rem;
+  color: #444;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.star-icon input:checked~label,
+.star-icon label:hover,
+.star-icon label:hover~label {
+  color: var(--gold-primary);
+}
+
+html,
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--text-light);
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold-primary);
+}
+
+/* Navbar */
+.navbar {
+  background-color: rgba(30, 30, 30, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2) !important;
+}
+
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.nav-link {
+  color: var(--text-light) !important;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--gold-primary) !important;
+}
+
+/* Footer */
+footer {
+  background-color: #0a0a0a;
+  color: var(--text-muted);
+  border-top: 1px solid #333 !important;
+}
+
+footer a {
+  color: var(--gold-primary);
+  text-decoration: none;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--gold-primary);
+  border-color: var(--gold-primary);
+  color: #000;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 2px;
+  padding: 10px 25px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--gold-hover);
+  border-color: var(--gold-hover);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-outline-primary {
+  color: var(--gold-primary);
+  border-color: var(--gold-primary);
+  border-radius: 2px;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--gold-primary);
+  color: #000;
+}
+
+/* Cards */
+.card {
+  background-color: var(--dark-card) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-color: var(--gold-primary) !important;
+}
+
+.card-title {
+  color: var(--text-light) !important;
+}
+
+.card-text {
+  color: var(--text-muted) !important;
+}
+
+/* Form Elements */
+.form-control,
+.form-select {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  color: var(--text-light);
+  border-radius: 2px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: #333;
+  color: var(--text-light);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+}
+
+.form-control::placeholder {
+  color: #666;
+}
+
+/* Utilities */
+.text-primary {
+  color: var(--gold-primary) !important;
+}
+
+.bg-light {
+  background-color: #1e1e1e !important;
+  /* Override light backgrounds to dark card color */
+  color: var(--text-light);
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Image Hover */
+.card-img-wrapper img {
+  opacity: 0.9;
+  transition: all 0.5s ease;
+}
+
+.card:hover .card-img-wrapper img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Inputs Number fix */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Breadcrumb */
+.breadcrumb-item a {
+  color: var(--gold-primary);
+}
+
+.breadcrumb-item.active {
+  color: var(--text-muted);
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+  color: #666;
+}
+
+/* Star Rating Logic */
+.rating-css input {
+  display: none;
+}
+
+.star-icon {
+  display: flex;
+  flex-direction: row-reverse;
+  /* Reorder so 5 is first in DOM but last visually? No, 5 is first in DOM, reversed making it rightmost? 
+                                    Wait, typical logic: DOM: 5 4 3 2 1. Visual: 1 2 3 4 5 (reversed). 
+                                    Hover 3 (middle) -> selects 3, 2, 1 (subsequent siblings in DOM).
+                                    Let's verify: 
+                                    DOM: Input 5, Label 5, Input 4, Label 4 ... 
+                                    Style: flex-direction: row-reverse. 
+                                    Visual: Label 1, Label 2, Label 3, Label 4, Label 5. 
+                                    Hover Label 3. Sibling selector ~ targets Label 2 and Label 1. 
+                                    So Label 3, 2, 1 get colored. Correct.
+                                 */
+  justify-content: flex-end;
+  /* Align left visually? No, if row-reverse, flex-end puts them at 'start' (left) */
+}
+
+.star-icon label {
+  font-size: 1.5rem;
+  color: #444;
+  /* Unselected color */
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 0.2s;
+}
+
+.star-icon input:checked~label,
+.star-icon label:hover,
+.star-icon label:hover~label {
+  color: var(--gold-primary);
 }

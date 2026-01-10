@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Cerere Trimisa";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="text-center p-5 rounded shadow-lg" style="background-color: #1a1a1a; border: 1px solid #333; max-width: 600px;">
+        <div class="mb-4">
+            <i class="bi bi-send-check-fill text-info" style="font-size: 5rem;"></i>
+        </div>
+        
+        <h1 class="display-5 text-light mb-3">Cerere Trimisa!</h1>
+        
+        <p class="lead text-muted mb-5">
+            Am inregistrat solicitarea ta de a deveni colaborator. Un administrator o va revizui in curand.
+            <br /> Vei avea acces la functiile de colaborator imediat ce cererea este aprobata.
+        </p>
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-lg px-4">
+            Inapoi la Prima Pagina
+        </a>
+    </div>
+</div>

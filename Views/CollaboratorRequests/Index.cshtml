@@ -1,0 +1,47 @@
+@model IEnumerable<OnlineShop.Models.CollaboratorRequest>
+
+@{
+    ViewData["Title"] = "Cereri Colaborare";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-warning">Cereri de Colaborare in Asteptare</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-dark border-secondary">Nu exista cereri noi.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Email Utilizator</th>
+                        <th>Motiv</th>
+                        <th class="text-end">Actiuni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.RequestDate.ToShortDateString()</td>
+                            <td>@item.User?.Email</td>
+                            <td class="text-muted">@item.Reason</td>
+                            <td class="text-end">
+                                <form asp-action="Approve" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">Aproba</button>
+                                </form>
+                                <form asp-action="Reject" asp-route-id="@item.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger">Respinge</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

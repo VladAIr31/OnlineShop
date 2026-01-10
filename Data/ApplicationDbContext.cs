@@ -13,6 +13,14 @@ namespace OnlineShop.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<WishlistItem> WishlistItems { get; set; }
+        public DbSet<CollaboratorRequest> CollaboratorRequests { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<ProductFaq> ProductFaqs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

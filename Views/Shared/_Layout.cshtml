@@ -11,80 +11,89 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">A&B Drinks</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Categorii</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Produse</a>
-                        </li>
-
-                        @* @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Cart" asp-action="Index">
-                                    <i class="bi bi-cart"></i> Coșul Meu
-                                </a>
-                            </li>
-                        }
-                        *@
-
-                        @if (User.IsInRole("Colaborator") || User.IsInRole("Administrator"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-success fw-bold" asp-controller="Products" asp-action="Create">
-                                    + Propune Produs
-                                </a>
-                            </li>
-                        }
-
-                        @if (User.IsInRole("Administrator"))
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-danger" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Administrare
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Categories" asp-action="Index">Gestionare Categorii</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Products" asp-action="PendingIndex">Aprobare Produse</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
-                    </ul>
-
-                    <partial name="_LoginPartial" />
-                </div>
+    <header class="py-4 border-bottom border-secondary mb-4" style="border-color: rgba(255,255,255,0.05) !important;">
+        <div class="container text-center">
+            <!-- Top Bar (User Links) -->
+            <div class="d-flex justify-content-end mb-3 small text-uppercase tracking-wide">
+                <partial name="_LoginPartial" />
             </div>
-        </nav>
+
+            <!-- Logo -->
+            <a asp-controller="Home" asp-action="Index" class="brand-centered mb-4">
+                A&B Drinks<span class="text-white fs-6 d-block mt-2 tracking-wide font-monospace" style="font-family: var(--font-body) !important;">PREMIUM SELECTION</span>
+            </a>
+
+            <!-- Navigation Menu -->
+            <nav class="d-flex justify-content-center">
+                <ul class="nav-links-custom">
+                    <li><a asp-controller="Home" asp-action="Index" class="nav-link-custom">Acasa</a></li>
+                    <li><a asp-controller="Products" asp-action="Index" class="nav-link-custom">Catalog</a></li>
+                    
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a asp-controller="Wishlist" asp-action="Index" class="nav-link-custom">Favorite</a></li>
+                        <li><a asp-controller="Cart" asp-action="Index" class="nav-link-custom">Cos Cumparaturi</a></li>
+                        <li><a asp-controller="Orders" asp-action="Index" class="nav-link-custom">Comenzi</a></li>
+                    }
+
+                    @if (User.IsInRole("Colaborator") || User.IsInRole("Administrator"))
+                    {
+                        <li><a asp-controller="Products" asp-action="Create" class="nav-link-custom text-gold">Propune Produs</a></li>
+                        <li><a asp-controller="Products" asp-action="MyProducts" class="nav-link-custom text-gold">Produsele Mele</a></li>
+                    }
+
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <li class="dropdown position-relative">
+                             <a href="#" class="nav-link-custom text-danger dropdown-toggle" data-bs-toggle="dropdown">Admin</a>
+                             <ul class="dropdown-menu dropdown-menu-dark bg-dark-surface border-gold mt-2 shadow-lg rounded-0">
+                                <li><a class="dropdown-item small text-uppercase py-2" asp-controller="Categories" asp-action="Index">Categorii</a></li>
+                                <li><a class="dropdown-item small text-uppercase py-2" asp-controller="Products" asp-action="PendingIndex">Aprobare</a></li>
+                                <li><a class="dropdown-item small text-uppercase py-2" asp-controller="Products" asp-action="FaqHistory">Chat History</a></li>
+                                <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                                <li><a class="dropdown-item small text-uppercase py-2" asp-controller="CollaboratorRequests" asp-action="Index">Cereri</a></li>
+                                <li><a class="dropdown-item small text-uppercase py-2" asp-controller="CollaboratorRequests" asp-action="ManageCollaborators">Colaboratori</a></li>
+                                <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                                <li><a class="dropdown-item small text-uppercase py-2" asp-controller="Users" asp-action="Index">Utilizatori</a></li>
+                             </ul>
+                        </li>
+                    }
+                    
+                    @if (User.Identity.IsAuthenticated && !User.IsInRole("Colaborator") && !User.IsInRole("Administrator"))
+                    {
+                        <li><a asp-controller="CollaboratorRequests" asp-action="Apply" class="nav-link-custom text-info">Devino Colaborator</a></li>
+                    }
+                </ul>
+            </nav>
+        </div>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @if (TempData["message"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["message"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - OnlineShop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    @* Footer removed as requested
+    <footer class="border-top footer text-muted mt-5 pt-4 pb-4">
+        <div class="container text-center">
+            &copy; 2025 - A&B Drinks - <span class="text-gold">Premium Selection</span> - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

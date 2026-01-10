@@ -2,7 +2,39 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@{
+    ViewData["Title"] = "Acasa";
+}
+
+<div class="text-center py-5 mb-5 px-3" style="background: linear-gradient(rgba(15,15,15,0.7), rgba(15,15,15,0.9)), url('https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; border-radius: 5px; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+    <h1 class="display-1 text-white fw-bold mb-3" style="text-shadow: 0 5px 15px rgba(0,0,0,0.8); letter-spacing: 0.1em;">NOUA COLECTIE</h1>
+    <p class="lead text-gold mb-5 fs-4 tracking-wide text-uppercase">Rafinament si Gust Autentic</p>
+    <div>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-primary btn-lg px-5 py-3 rounded-0 shadow-lg">Descopera Catalogul</a>
+    </div>
+</div>
+
+
+<div class="row g-4 mb-5 text-center">
+    <div class="col-md-4">
+        <div class="p-5 border border-gold bg-dark-surface h-100 hover-lift transition">
+            <i class="bi bi-star-fill display-4 text-gold mb-4 d-block"></i>
+            <h3 class="h4 mb-3 text-uppercase tracking-wide">Calitate Premium</h3>
+            <p class="text-light opacity-75">Selectie riguroasa a celor mai fine produse, garantand o experienta de neuitat.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-5 border border-secondary bg-dark-surface h-100 op-50">
+            <i class="bi bi-truck display-4 text-white mb-4 d-block"></i>
+            <h3 class="h4 mb-3 text-uppercase tracking-wide text-white">Livrare Rapida</h3>
+            <p class="text-light opacity-75">Produsele tale favorite ajung la tine in siguranta, in cel mai scurt timp posibil.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-5 border border-gold bg-dark-surface h-100">
+            <i class="bi bi-gem display-4 text-gold mb-4 d-block"></i>
+            <h3 class="h4 mb-3 text-uppercase tracking-wide">Exclusivitate</h3>
+            <p class="text-light opacity-75">Editii limitate si colectii rare pe care nu le vei gasi in alta parte.</p>
+        </div>
+    </div>
 </div>

@@ -1,99 +1,154 @@
 ﻿@model IEnumerable<OnlineShop.Models.Product>
 
 @{
-    ViewData["Title"] = "Toate Produsele";
+    ViewData["Title"] = "Colectia Premium";
 }
 
 <style>
-
-    .card-img-wrapper {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        overflow: hidden;
-    }
-
-        .card-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            transition: transform 0.3s ease;
-        }
-
-    .card:hover .card-img-wrapper img {
-        transform: scale(1.05);
-    }
-
-    .card-body-transparent {
-        background-color: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(5px);
-        position: relative;
-        z-index: 2;
-    }
-
-    .card {
-        background-color: transparent;
-        border: none;
+    .hero-section {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1560512823-8db03e1b0949?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 4px;
+        padding: 5rem 2rem;
+        margin-bottom: 3rem;
+        border: 1px solid rgba(212, 175, 55, 0.3);
     }
 </style>
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Lista Produse</h2>
+<div class="hero-section text-center text-white">
+    <h1 class="display-3 fw-bold mb-3" style="font-family: 'Playfair Display', serif;">Eleganta in Fiecare Sticla</h1>
+    <p class="lead mb-4" style="color: #ddd;">Descopera selectia noastra exclusiva de bauturi fine pentru momente speciale.</p>
+    <a href="#shop-products" class="btn btn-primary btn-lg px-5">Exploreaza Colectia</a>
+</div>
+
+<div class="container" id="shop-products">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="border-bottom border-warning pb-2 pe-4">Catalog Produse</h2>
         <div>
             @if (User.IsInRole("Colaborator") || User.IsInRole("Administrator"))
             {
-                <a asp-action="Create" class="btn btn-primary">Adauga Produs</a>
+                <a asp-action="Create" class="btn btn-outline-light btn-sm">Adauga Produs</a>
             }
             @if (User.IsInRole("Administrator"))
             {
-                <a asp-action="PendingIndex" class="btn btn-warning ms-2">Produse in Asteptare</a>
+                <a asp-action="PendingIndex" class="btn btn-warning btn-sm ms-2">Produse in Asteptare</a>
             }
         </div>
     </div>
 
     @if (TempData["message"] != null)
     {
-        <div class="alert alert-success">
+        <div class="alert alert-success bg-dark text-success border-success">
             @TempData["message"]
         </div>
     }
 
+    <!-- Formular Cautare & Filtrare -->
+    <form method="get" action="@Url.Action("Index", "Products")" class="row g-3 mb-5 p-4 rounded shadow-sm" style="background-color: #1a1a1a; border: 1px solid #333;">
+        <div class="col-md-5">
+            <label for="searchString" class="form-label fw-bold text-light">Cauta produs</label>
+            <input type="text" class="form-control bg-dark text-light border-secondary" name="searchString" 
+                   value="@ViewBag.CurrentSearch" placeholder="Cauta in titlu sau descriere...">
+        </div>
+        <div class="col-md-3">
+             <label for="categoryId" class="form-label fw-bold text-light">Categorie</label>
+             <select name="categoryId" class="form-select bg-dark text-light border-secondary" asp-items="ViewBag.Categories">
+                 <option value="">Toate Categoriile</option>
+             </select>
+        </div>
+        <div class="col-md-3">
+            <label for="sortOrder" class="form-label fw-bold text-light">Sortare</label>
+            <select name="sortOrder" class="form-select bg-dark text-light border-secondary">
+                <option value="">Sortare Implicita</option>
+                <option value="price_asc" selected="@(ViewBag.CurrentSort == "price_asc")">Pret: Mic la Mare</option>
+                <option value="price_desc" selected="@(ViewBag.CurrentSort == "price_desc")">Pret: Mare la Mic</option>
+                <option value="rating_desc" selected="@(ViewBag.CurrentSort == "rating_desc")">Rating: Mare la Mic</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Cauta</button>
+        </div>
+         @if(ViewBag.CurrentSearch != null || ViewBag.CurrentCategory != null || ViewBag.CurrentSort != null)
+        {
+             <div class="col-12 mt-2">
+                <a asp-action="Index" class="text-warning small">Reseteaza Filtrele</a>
+             </div>
+        }
+    </form>
+
     <div class="row">
+        @if(!Model.Any())
+        {
+             <div class="col-12 text-center py-5">
+                 <h3 class="text-muted">Nu au fost gasite produse.</h3>
+             </div>
+        }
+
         @foreach (var item in Model)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-
-                    <div class="card-img-wrapper">
-                        <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "https://via.placeholder.com/300" : item.ImagePath)"
-                             alt="@item.Title">
-                    </div>
-
-                    <div class="card-body card-body-transparent d-flex flex-column">
-                        <h5 class="card-title text-dark fw-bold">@item.Title</h5>
-
-                        <p class="card-text text-muted" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                            @item.Description
-                        </p>
-
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <span class="h4 mb-0 text-primary fw-bold">@item.Price RON</span>
+            <div class="col-md-4 mb-5">
+                <div class="card h-100 border-0 position-relative bg-transparent">
+                    
+                    <div class="card-img-wrapper position-relative rounded shadow-lg" style="height: 300px;">
+                        <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "https://via.placeholder.com/300?text=No+Image" : item.ImagePath)"
+                             alt="@item.Title" class="w-100 h-100" style="object-fit: cover; opacity: 1;">
+                        
+                        <div class="position-absolute top-0 end-0 p-2">
+                             @if(item.Rating > 0)
+                             {
+                                <span class="badge bg-warning text-dark shadow-sm">
+                                    <i class="bi bi-star-fill"></i> @item.Rating
+                                </span>
+                             }
                         </div>
                     </div>
 
-                    <div class="card-footer card-body-transparent border-top-0 pt-0">
-                        <small class="text-muted d-block mb-2">Categorie: @(item.Category?.Name ?? "General")</small>
-                        @if (User.IsInRole("Administrator"))
-                        {
-                            <div class="d-flex gap-2">
-                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning w-100">Editeaza</a>
-                                 <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="w-100" onsubmit="return confirm('Esti sigur ca vrei sa stergi acest produs?');">
-                                     <button type="submit" class="btn btn-sm btn-outline-danger w-100">Sterge</button>
-                                 </form>
-                            </div>
-                        }
+                    <div class="card-body px-0 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mt-3">
+                             <div>
+                                <h5 class="card-title fw-bold mb-1" style="font-family: 'Playfair Display'; font-size: 1.4rem;">@item.Title</h5>
+                                <small class="text-muted text-uppercase" style="letter-spacing: 1px; font-size: 0.7rem;">@(item.Category?.Name ?? "General")</small>
+                             </div>
+                             <span class="h5 mb-0 text-primary fw-bold">@item.Price <small class="fs-6">RON</small></span>
+                        </div>
+
+                        <p class="card-text text-secondary mt-2 small" style="overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                            @item.Description
+                        </p>
+
+                        <div class="mt-auto pt-3">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary w-100 mb-2">Detalii Produs</a>
+
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <div class="btn-group w-100" role="group">
+                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                     <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id">Sterge</button>
+                                </div>
+                                
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content bg-dark border-secondary">
+                                      <div class="modal-header border-secondary">
+                                        <h5 class="modal-title">Confirmare Stergere</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        Esti sigur ca vrei sa stergi produsul <strong>@item.Title</strong>?
+                                      </div>
+                                      <div class="modal-footer border-secondary">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuleaza</button>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                            <button type="submit" class="btn btn-danger">Sterge Definitiv</button>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

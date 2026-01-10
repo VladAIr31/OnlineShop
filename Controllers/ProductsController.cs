@@ -21,13 +21,90 @@ namespace OnlineShop.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        [AllowAnonymous]
+        public IActionResult Index(string? searchString, int? categoryId, string? sortOrder)
         {
-            // Doar produsele aprobate sunt vizibile public
+            // ViewBag pentru a retine selectiile in view
+            ViewBag.CurrentSearch = searchString;
+            ViewBag.CurrentCategory = categoryId;
+            ViewBag.CurrentSort = sortOrder;
+
+            // Preluam categoriile pentru dropdown
+            ViewBag.Categories = new SelectList(db.Categories, "Id", "Name", categoryId);
+
+            // Query de baza - doar produse aprobate
             var products = db.Products.Include("Category")
-                                      .Where(p => p.Status == ProductStatus.Approved)
-                                      .ToList();
-            return View(products);
+                                      .Include("Reviews")
+                                      .Where(p => p.Status == ProductStatus.Approved);
+
+            // 1. Cautare dupa titlu sau descriere (Case Insensitive)
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var search = searchString.ToLower();
+                products = products.Where(p => p.Title.ToLower().Contains(search) || 
+                                               p.Description.ToLower().Contains(search));
+            }
+
+            // 2. Filtrare dupa categorie
+            if (categoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            // 3. Sortare
+            switch (sortOrder)
+            {
+                case "price_asc":
+                    products = products.OrderBy(p => p.Price);
+                    break;
+                case "price_desc":
+                    products = products.OrderByDescending(p => p.Price);
+                    break;
+                case "rating_desc":
+                    // Pentru rating e mai complex deoarece e calculat in memorie (not mapped)
+                    // Daca vrem sortare in DB, ar trebui sa executam query-ul si apoi sa sortam in memorie
+                    // SAU sa persistam rating-ul. 
+                    // Pentru simplitate si performanta pe seturi mici, aducem in memorie apoi sortam.
+                    // Totusi, pentru query eficient, vom lasa default sortarea implicita din baza, 
+                    // iar daca userul cere rating, o facem in-memory la final (ToList).
+                    break;
+                default:
+                    // Default: cele mai recente sau dupa ID
+                    products = products.OrderByDescending(p => p.Id);
+                    break;
+            }
+
+            var productList = products.ToList();
+
+            // Sortare in-memory pentru Rating (fiindca e calculat si NotMapped)
+            if (sortOrder == "rating_desc")
+            {
+                productList = productList.OrderByDescending(p => p.Rating).ToList();
+            }
+
+            return View(productList);
+        }
+
+        [AllowAnonymous]
+        public IActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = db.Products
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)!
+                .ThenInclude(r => r.User)
+                .FirstOrDefault(m => m.Id == id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
         }
 
         // GET param pentru a lista produse in asteptare
@@ -66,6 +143,18 @@ namespace OnlineShop.Controllers
                 TempData["message"] = "Produsul a fost respins!";
             }
             return RedirectToAction("PendingIndex");
+        }
+
+        // ISTORIC PRODUSE PROPRII (Colaboratori + Admini)
+        [Authorize(Roles = "Colaborator,Administrator")]
+        public IActionResult MyProducts()
+        {
+            var userId = _userManager.GetUserId(User);
+            var products = db.Products.Include("Category")
+                                      .Where(p => p.UserId == userId)
+                                      .OrderByDescending(p => p.Id) // Cele mai recente primele
+                                      .ToList();
+            return View(products);
         }
 
         // GET: Products/Create
@@ -258,6 +347,76 @@ namespace OnlineShop.Controllers
                 TempData["message"] = "Produsul a fost sters";
             }
             return RedirectToAction("Index");
+        }
+        // POST: Products/AddReview
+        [Authorize]
+        [HttpPost]
+        public IActionResult AddReview([FromForm] Review review)
+        {
+            if (ModelState.IsValid)
+            {
+                // Setam valorile implicite
+                review.Date = DateTime.UtcNow;
+                review.UserId = _userManager.GetUserId(User);
+
+                // Nu putem avea review fara continut si fara rating
+                if (string.IsNullOrWhiteSpace(review.Content) && review.Rating == null)
+                {
+                    TempData["message"] = "Trebuie sa adaugi un text sau un rating!";
+                    TempData["messageType"] = "alert-danger";
+                    return RedirectToAction("Details", new { id = review.ProductId });
+                }
+
+                db.Reviews.Add(review);
+                db.SaveChanges();
+                TempData["message"] = "Review-ul a fost adaugat!";
+                TempData["messageType"] = "alert-success";
+            }
+            else
+            {
+                TempData["message"] = "Nu am putut adauga review-ul. Verifica datele.";
+                TempData["messageType"] = "alert-danger";
+            }
+            return RedirectToAction("Details", new { id = review.ProductId });
+        }
+
+        // POST: Products/DeleteReview
+        [Authorize]
+        [HttpPost]
+        public IActionResult DeleteReview(int id)
+        {
+            var review = db.Reviews.Find(id);
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            // Verificam drepturile: Admin sau Proprietarul review-ului
+            if (User.IsInRole("Administrator") || review.UserId == _userManager.GetUserId(User))
+            {
+                db.Reviews.Remove(review);
+                db.SaveChanges();
+                TempData["message"] = "Review-ul a fost sters!";
+                TempData["messageType"] = "alert-success";
+            }
+            else
+            {
+                TempData["message"] = "Nu ai dreptul sa stergi acest review!";
+                TempData["messageType"] = "alert-danger";
+            }
+
+            return RedirectToAction("Details", new { id = review.ProductId });
+        }
+        // GET: Products/FaqHistory
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> FaqHistory()
+        {
+            var faqs = await db.ProductFaqs
+                .Include(f => f.Product)
+                .OrderByDescending(f => f.Date)
+                .ToListAsync();
+            
+            return View(faqs);
         }
     }
 }

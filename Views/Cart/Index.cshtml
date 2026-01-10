@@ -1,0 +1,70 @@
+@model OnlineShop.Models.Cart
+
+@{
+    ViewData["Title"] = "Cosul Meu";
+    var total = Model.CartItems.Sum(i => i.Quantity * i.Product.Price);
+}
+
+<div class="container mt-5">
+    <h2 class="text-gold mb-4" style="font-family: 'Playfair Display', serif;">Cosul de Cumparaturi</h2>
+
+    @if (Model.CartItems.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Produs</th>
+                        <th>Pret</th>
+                        <th>Cantitate</th>
+                        <th>Total</th>
+                        <th>Actiuni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="@(string.IsNullOrEmpty(item.Product.ImagePath) ? "https://via.placeholder.com/50" : item.Product.ImagePath)" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <span>@item.Product.Title</span>
+                                </div>
+                            </td>
+                            <td>@item.Product.Price RON</td>
+                            <td>
+                                <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center" style="max-width: 150px;">
+                                    <input type="hidden" name="itemId" value="@item.Id" />
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.Product.Stock" class="form-control form-control-sm bg-dark text-light border-secondary me-2 text-center" onchange="this.form.submit()">
+                                </form>
+                            </td>
+                            <td class="fw-bold text-warning">@(item.Quantity * item.Product.Price) RON</td>
+                            <td>
+                                <form asp-action="Remove" method="post">
+                                    <input type="hidden" name="itemId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center mt-4 p-4 border border-secondary bg-dark">
+            <h4 class="text-light me-4 mb-0">Total: <span class="text-warning">@total RON</span></h4>
+            <form asp-controller="Orders" asp-action="Checkout" method="post">
+                <button type="submit" class="btn btn-primary btn-lg rounded-0 px-5 shadow-gold">FINALIZEAZA COMANDA</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x display-1 text-muted mb-3"></i>
+            <h3 class="text-light">Cosul tau este gol</h3>
+            <p class="text-muted">Descopera selectia noastra de bauturi premium.</p>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-warning mt-3">Vezi Produse</a>
+        </div>
+    }
+</div>
